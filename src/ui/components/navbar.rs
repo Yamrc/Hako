@@ -19,7 +19,7 @@ impl Navbar {
 		let ver = inst.version.clone();
 		tokio::runtime::Handle::current().spawn(async move {
 			let task = StartGameTask { instance: inst };
-			match tm.submit_blocking(task).await {
+			match tm.submit(task).await {
 				Ok(mut h) => {
 					tracing::info!("启动: {} ({})", ver, h.id);
 					tokio::spawn(async move {

@@ -47,6 +47,7 @@ impl Account {
 	}
 }
 
+#[derive(Debug)]
 pub struct AccountManager {
 	accounts: RwLock<Vec<Account>>,
 	current: RwLock<Option<usize>>,
