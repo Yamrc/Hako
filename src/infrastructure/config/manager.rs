@@ -1,10 +1,8 @@
-use crate::config::game::GameConfig;
-use crate::config::launcher::LauncherConfig;
 use crate::core::paths;
+use crate::infrastructure::config::game::GameConfig;
+use crate::infrastructure::config::launcher::LauncherConfig;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::fs;
 use std::path::{Path, PathBuf};
 use tokio::sync::RwLock;
 
@@ -50,7 +48,7 @@ pub struct ConfigManager {
 impl ConfigManager {
 	pub async fn new() -> Result<Self> {
 		let config_dir = paths::config_dir()?;
-		fs::create_dir_all(&config_dir)?;
+		tokio::fs::create_dir_all(&config_dir).await?;
 		let config_path = config_dir.join("config.yml");
 
 		let config = if config_path.exists() {

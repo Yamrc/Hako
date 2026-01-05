@@ -79,7 +79,7 @@ pub struct DownloadClient {
 impl DownloadClient {
 	pub fn new() -> Result<Self, DownloadError> {
 		let client = Client::builder()
-			.read_timeout(Duration::from_secs(600)) // 我不信还能timeout
+			.read_timeout(Duration::from_secs(600))
 			.build()?;
 
 		Ok(Self { client })

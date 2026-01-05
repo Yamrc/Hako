@@ -2,11 +2,9 @@ use crate::ui::{app::HakoApp, build_window_options};
 use anyhow::Result;
 use gpui::{AppContext, Application};
 
-mod account;
-mod config;
 mod core;
-mod game;
-mod net;
+mod domain;
+mod infrastructure;
 mod task;
 mod ui;
 

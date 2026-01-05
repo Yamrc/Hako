@@ -1,7 +1,6 @@
 use anyhow::Result;
 use std::path::PathBuf;
 
-// TODO: 查找多个Java实例
 pub fn find_java(prefer: Option<PathBuf>) -> Result<PathBuf> {
 	if let Some(p) = prefer {
 		if p.exists() {

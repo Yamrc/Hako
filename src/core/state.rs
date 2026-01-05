@@ -1,6 +1,6 @@
-use crate::account::AccountManager;
-use crate::config::manager::ConfigManager;
-use crate::game::instance::GameInstance;
+use crate::domain::AccountManager;
+use crate::domain::game::GameInstance;
+use crate::infrastructure::config::ConfigManager;
 use crate::task::game::download::{DownloadProgressState, ProgressRef};
 use crate::task::handle::TaskId;
 use crate::task::manager::TaskManager;
@@ -63,7 +63,7 @@ impl AppState {
 		let path = tokio::task::block_in_place(|| {
 			tokio::runtime::Handle::current().block_on(self.cluster_path())
 		});
-		if let Ok(found) = crate::game::instance::InstanceScanner::scan_cluster(&path) {
+		if let Ok(found) = crate::domain::game::InstanceScanner::scan_cluster(&path) {
 			let mut guard = self.instances.write().unwrap();
 			tracing::info!("Scanned {} instances from {}", found.len(), path.display());
 			*guard = found;
@@ -71,7 +71,7 @@ impl AppState {
 	}
 
 	pub async fn set_cluster_path(&self, path: PathBuf) -> Result<(), anyhow::Error> {
-		use crate::config::LauncherConfigDiff;
+		use crate::infrastructure::config::LauncherConfigDiff;
 		let diff = LauncherConfigDiff {
 			cluster_path: Some(path.clone()),
 			..Default::default()

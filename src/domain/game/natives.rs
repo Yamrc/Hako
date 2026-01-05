@@ -1,6 +1,6 @@
-use crate::game::args::{Features, current_arch, current_os_key};
-use crate::game::classpath::{library_applicable, library_path};
-use crate::game::profile::VersionProfile;
+use crate::domain::game::args::{Features, current_arch, current_os_key};
+use crate::domain::game::classpath::{library_applicable, library_path};
+use crate::domain::game::profile::VersionProfile;
 use anyhow::{Context, Result};
 use std::collections::HashSet;
 use std::fs;

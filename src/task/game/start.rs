@@ -1,11 +1,12 @@
-use crate::config::manager::ConfigManager;
 use crate::core::state::AppState;
-use crate::game::args::{Features, collect_game_args, collect_jvm_args};
-use crate::game::classpath::build_classpath;
-use crate::game::instance::GameInstance;
-use crate::game::java::find_java;
-use crate::game::natives::{extract_natives, get_natives_directory};
-use crate::game::profile::{VersionProfile, load_version_profile};
+use crate::domain::account;
+use crate::domain::game::GameInstance;
+use crate::domain::game::args::{Features, collect_game_args, collect_jvm_args};
+use crate::domain::game::classpath::build_classpath;
+use crate::domain::game::find_java;
+use crate::domain::game::natives::{extract_natives, get_natives_directory};
+use crate::domain::game::{VersionProfile, load_version_profile};
+use crate::infrastructure::config::ConfigManager;
 use crate::task::error::{TaskError, TaskResult};
 use crate::task::lock::LockKey;
 use crate::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
@@ -55,12 +56,7 @@ impl StartContext {
 			.accounts
 			.current()
 			.map(|a| (a.username().to_string(), a.uuid().to_string()))
-			.unwrap_or_else(|| {
-				(
-					"Player".into(),
-					crate::account::offline_uuid("Player").to_string(),
-				)
-			});
+			.unwrap_or_else(|| ("Player".into(), account::offline_uuid("Player").to_string()));
 
 		let jvm_args: Vec<String> = resolved
 			.jvm_args
