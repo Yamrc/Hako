@@ -47,7 +47,6 @@ impl Account {
 	}
 }
 
-#[derive(Debug)]
 pub struct AccountManager {
 	accounts: RwLock<Vec<Account>>,
 	current: RwLock<Option<usize>>,
@@ -98,8 +97,16 @@ impl AccountManager {
 		}
 	}
 
+	// TODO: Microsoft OAuth 登录
 	pub async fn login_microsoft(&self, client_id: &str) -> Result<usize, ()> {
 		todo!("")
+		//     1. 设备码流程获取 device_code
+		//     2. 用户授权后获取 access_token
+		//     3. Xbox Live 认证
+		//     4. XSTS 认证
+		//     5. Minecraft 认证获取 MC access_token
+		//     6. 获取用户 profile (username, uuid)
+		//     7. 存储到 keyring
 	}
 }
 

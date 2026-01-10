@@ -1,6 +1,6 @@
-use crate::domain::AccountManager;
-use crate::domain::game::GameInstance;
-use crate::infrastructure::config::ConfigManager;
+use crate::account::AccountManager;
+use crate::config::manager::ConfigManager;
+use crate::game::instance::GameInstance;
 use crate::task::game::download::{DownloadProgressState, ProgressRef};
 use crate::task::handle::TaskId;
 use crate::task::manager::TaskManager;
@@ -10,9 +10,8 @@ use std::sync::{Arc, Mutex, OnceLock, RwLock};
 
 static APP_STATE: OnceLock<AppState> = OnceLock::new();
 
-#[derive(Debug)]
 pub struct AppState {
-	pub config: Arc<ConfigManager>,
+	pub config: ConfigManager,
 	pub accounts: AccountManager,
 	pub task_manager: Arc<TaskManager>,
 	pub instances: RwLock<Vec<GameInstance>>,
@@ -21,29 +20,21 @@ pub struct AppState {
 }
 
 impl AppState {
-	pub async fn init() -> &'static Self {
-		if APP_STATE.get().is_some() {
-			return APP_STATE.get().expect("AppState not initialized");
-		}
-
-		let state = Self::create().await;
-		state.scan_instances();
-		APP_STATE.set(state).expect("Failed to initialize AppState");
-		APP_STATE.get().expect("AppState not initialized")
+	pub fn init() -> &'static Self {
+		APP_STATE.get_or_init(|| {
+			let state = Self::create();
+			state.scan_instances();
+			state
+		})
 	}
 
 	pub fn get() -> &'static Self {
 		APP_STATE.get().expect("AppState not initialized")
 	}
 
-	async fn create() -> Self {
-		let config = Arc::new(ConfigManager::new().await.unwrap_or_else(|_| {
-			tracing::warn!("Failed to load config, using defaults");
-			ConfigManager::default()
-		}));
-
+	fn create() -> Self {
 		Self {
-			config,
+			config: ConfigManager::default(),
 			accounts: AccountManager::new(),
 			task_manager: Arc::new(TaskManager::new()),
 			instances: RwLock::new(Vec::new()),
@@ -52,33 +43,24 @@ impl AppState {
 		}
 	}
 
-	pub async fn cluster_path(&self) -> PathBuf {
-		let config = self.config.get().await;
-		config.cluster_path.clone().unwrap_or_else(|| {
+	pub fn cluster_path(&self) -> PathBuf {
+		self.config.get().cluster_path.unwrap_or_else(|| {
 			crate::core::paths::default_minecraft_dir().unwrap_or_else(|| ".minecraft".into())
 		})
 	}
 
 	pub fn scan_instances(&self) {
-		let path = tokio::task::block_in_place(|| {
-			tokio::runtime::Handle::current().block_on(self.cluster_path())
-		});
-		if let Ok(found) = crate::domain::game::InstanceScanner::scan_cluster(&path) {
+		let path = self.cluster_path();
+		if let Ok(found) = crate::game::instance::InstanceScanner::scan_cluster(&path) {
 			let mut guard = self.instances.write().unwrap();
 			tracing::info!("Scanned {} instances from {}", found.len(), path.display());
 			*guard = found;
 		}
 	}
 
-	pub async fn set_cluster_path(&self, path: PathBuf) -> Result<(), anyhow::Error> {
-		use crate::infrastructure::config::LauncherConfigDiff;
-		let diff = LauncherConfigDiff {
-			cluster_path: Some(path.clone()),
-			..Default::default()
-		};
-		self.config.update(diff).await?;
+	pub fn set_cluster_path(&self, path: PathBuf) {
+		let _ = self.config.update(|c| c.cluster_path = Some(path));
 		self.scan_instances();
-		Ok(())
 	}
 
 	pub fn select_instance(&self, idx: Option<usize>) {

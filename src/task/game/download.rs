@@ -1,10 +1,10 @@
-use crate::domain::game::args::{Features, current_arch, current_os_key, rule_allows};
-use crate::domain::game::profile::{Library, VersionProfile, load_version_profile};
-use crate::infrastructure::network::download::{DownloadClient, DownloadRequest};
+use crate::game::args::{Features, current_arch, current_os_key, rule_allows};
+use crate::game::profile::{Library, VersionProfile, load_version_profile};
+use crate::net::download::{DownloadClient, DownloadRequest};
 use crate::task::error::{TaskError, TaskResult};
 use crate::task::lock::LockKey;
+use crate::task::main_task::{ConcurrentTask, TaskContext, TaskType};
 use crate::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
-use crate::task::task_trait::{Task, TaskContext, TaskType};
 use anyhow::Context;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -81,7 +81,7 @@ impl TaskType for DownloadGameTask {
 }
 
 #[async_trait::async_trait]
-impl Task for DownloadGameTask {
+impl ConcurrentTask for DownloadGameTask {
 	type Output = ();
 
 	fn locks(&self) -> Vec<LockKey> {

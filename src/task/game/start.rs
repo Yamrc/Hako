@@ -1,16 +1,15 @@
+use crate::config::manager::ConfigManager;
 use crate::core::state::AppState;
-use crate::domain::account;
-use crate::domain::game::GameInstance;
-use crate::domain::game::args::{Features, collect_game_args, collect_jvm_args};
-use crate::domain::game::classpath::build_classpath;
-use crate::domain::game::find_java;
-use crate::domain::game::natives::{extract_natives, get_natives_directory};
-use crate::domain::game::{VersionProfile, load_version_profile};
-use crate::infrastructure::config::ConfigManager;
+use crate::game::args::{Features, collect_game_args, collect_jvm_args};
+use crate::game::classpath::build_classpath;
+use crate::game::instance::GameInstance;
+use crate::game::java::find_java;
+use crate::game::natives::{extract_natives, get_natives_directory};
+use crate::game::profile::{VersionProfile, load_version_profile};
 use crate::task::error::{TaskError, TaskResult};
 use crate::task::lock::LockKey;
+use crate::task::main_task::{BlockingTask, TaskContext, TaskType};
 use crate::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
-use crate::task::task_trait::{Task, TaskContext, TaskType};
 use anyhow::Context;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -42,21 +41,21 @@ struct StartContext {
 impl StartContext {
 	fn from_instance(instance: &GameInstance) -> Self {
 		let state = AppState::get();
-		let launcher_config = state.config.get_sync();
-		let game_config = tokio::task::block_in_place(|| {
-			tokio::runtime::Handle::current().block_on(
-				state
-					.config
-					.get_game_config(&instance.cluster_path, &instance.version),
-			)
-		});
+		let launcher_config = state.config.get();
+		let game_config =
+			ConfigManager::load_game_config(&instance.cluster_path, &instance.version);
 		let resolved = game_config.resolve(&launcher_config.game);
 
 		let (username, uuid) = state
 			.accounts
 			.current()
 			.map(|a| (a.username().to_string(), a.uuid().to_string()))
-			.unwrap_or_else(|| ("Player".into(), account::offline_uuid("Player").to_string()));
+			.unwrap_or_else(|| {
+				(
+					"Player".into(),
+					crate::account::offline_uuid("Player").to_string(),
+				)
+			});
 
 		let jvm_args: Vec<String> = resolved
 			.jvm_args
@@ -97,7 +96,7 @@ impl TaskType for StartGameTask {
 }
 
 #[async_trait::async_trait]
-impl Task for StartGameTask {
+impl BlockingTask for StartGameTask {
 	type Output = ();
 
 	fn locks(&self) -> Vec<LockKey> {
@@ -106,10 +105,6 @@ impl Task for StartGameTask {
 
 	fn queueable(&self) -> bool {
 		false
-	}
-
-	fn requires_global_lock(&self) -> bool {
-		true
 	}
 
 	async fn execute(&mut self, ctx: &TaskContext) -> TaskResult<Self::Output> {

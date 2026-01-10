@@ -5,10 +5,8 @@ pub struct SettingsView;
 
 impl SettingsView {
 	pub fn render() -> impl IntoElement {
-		let config = AppState::get().config.get_sync();
-		let cluster_path = tokio::task::block_in_place(|| {
-			tokio::runtime::Handle::current().block_on(AppState::get().cluster_path())
-		});
+		let config = AppState::get().config.get();
+		let cluster_path = AppState::get().cluster_path();
 
 		div()
 			.flex()

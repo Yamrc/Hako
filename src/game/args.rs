@@ -1,4 +1,4 @@
-use crate::domain::game::profile::{ArgValueInner, ArgumentValue, Rule, RuleOs, VersionProfile};
+use crate::game::profile::{ArgValueInner, ArgumentValue, Rule, RuleOs, VersionProfile};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::HashMap;

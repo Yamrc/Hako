@@ -24,7 +24,6 @@ impl LockKey {
 	}
 }
 
-#[derive(Debug)]
 pub struct LockManager {
 	locks: Arc<RwLock<HashSet<LockKey>>>,
 }

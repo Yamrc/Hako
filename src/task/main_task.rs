@@ -4,18 +4,10 @@ use async_trait::async_trait;
 
 pub trait TaskType: Send + Sync + 'static {
 	const TYPE_NAME: &'static str;
-
-	fn description(&self) -> String {
-		self.type_name().to_string()
-	}
-
-	fn type_name(&self) -> &'static str {
-		Self::TYPE_NAME
-	}
 }
 
 #[async_trait]
-pub trait Task: TaskType + Send + Sync {
+pub trait BlockingTask: TaskType + Send + Sync {
 	type Output: Send + 'static;
 
 	async fn execute(&mut self, ctx: &TaskContext) -> TaskResult<Self::Output>;
@@ -27,13 +19,20 @@ pub trait Task: TaskType + Send + Sync {
 	fn queueable(&self) -> bool {
 		true
 	}
+}
+
+#[async_trait]
+pub trait ConcurrentTask: TaskType + Send + Sync {
+	type Output: Send + 'static;
+
+	async fn execute(&mut self, ctx: &TaskContext) -> TaskResult<Self::Output>;
+
+	fn locks(&self) -> Vec<LockKey> {
+		vec![]
+	}
 
 	fn max_concurrent(&self) -> Option<usize> {
 		None
-	}
-
-	fn requires_global_lock(&self) -> bool {
-		false
 	}
 }
 

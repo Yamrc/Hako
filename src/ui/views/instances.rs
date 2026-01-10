@@ -8,10 +8,7 @@ impl InstancesView {
 		let state = AppState::get();
 		let instances = state.instances.read().unwrap().clone();
 		let current_idx = *state.current_instance.lock().unwrap();
-		let cluster_path = tokio::task::block_in_place(|| {
-			tokio::runtime::Handle::current()
-				.block_on(state.cluster_path())
-		});
+		let cluster_path = state.cluster_path();
 
 		div()
 			.flex()
