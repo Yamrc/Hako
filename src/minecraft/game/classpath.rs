@@ -1,5 +1,5 @@
-use crate::game::args::{Features, current_arch, current_os_key, rule_allows};
-use crate::game::profile::{Library, VersionProfile};
+use crate::minecraft::game::args::{Features, current_arch, current_os_key, rule_allows};
+use crate::minecraft::profile::{Library, VersionProfile};
 use anyhow::Result;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};

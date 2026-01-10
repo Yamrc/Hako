@@ -2,15 +2,13 @@ use crate::ui::{app::HakoApp, build_window_options};
 use anyhow::Result;
 use gpui::{AppContext, Application};
 
-mod account;
 mod config;
-mod core;
-mod game;
-mod net;
-mod task;
+mod infrastructure;
+mod launcher;
+mod minecraft;
 mod ui;
 
-use core::logger;
+use launcher::core::logger;
 
 fn main() -> Result<()> {
 	logger::init();

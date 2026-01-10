@@ -1,10 +1,10 @@
-use crate::game::args::{Features, current_arch, current_os_key, rule_allows};
-use crate::game::profile::{Library, VersionProfile, load_version_profile};
-use crate::net::download::{DownloadClient, DownloadRequest};
-use crate::task::error::{TaskError, TaskResult};
-use crate::task::lock::LockKey;
-use crate::task::main_task::{ConcurrentTask, TaskContext, TaskType};
-use crate::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
+use crate::minecraft::game::args::{Features, current_arch, current_os_key, rule_allows};
+use crate::minecraft::profile::{Library, VersionProfile, load_version_profile};
+use crate::infrastructure::network::download::{DownloadClient, DownloadRequest};
+use crate::launcher::task::error::{TaskError, TaskResult};
+use crate::launcher::task::lock::LockKey;
+use crate::launcher::task::framework::{ConcurrentTask, TaskContext, TaskType};
+use crate::launcher::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
 use anyhow::Context;
 use serde::Deserialize;
 use std::collections::HashMap;

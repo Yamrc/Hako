@@ -1,4 +1,4 @@
-use crate::core::state::AppState;
+use crate::launcher::core::state::AppState;
 use gpui::{div, prelude::*, rgb};
 
 pub struct InstancesView;

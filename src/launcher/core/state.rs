@@ -1,9 +1,9 @@
-use crate::account::AccountManager;
+use crate::minecraft::account::AccountManager;
 use crate::config::manager::ConfigManager;
-use crate::game::instance::GameInstance;
-use crate::task::game::download::{DownloadProgressState, ProgressRef};
-use crate::task::handle::TaskId;
-use crate::task::manager::TaskManager;
+use crate::minecraft::game::instance::GameInstance;
+use crate::minecraft::tasks::download::{DownloadProgressState, ProgressRef};
+use crate::launcher::task::handle::TaskId;
+use crate::launcher::task::manager::TaskManager;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, OnceLock, RwLock};
@@ -45,13 +45,13 @@ impl AppState {
 
 	pub fn cluster_path(&self) -> PathBuf {
 		self.config.get().cluster_path.unwrap_or_else(|| {
-			crate::core::paths::default_minecraft_dir().unwrap_or_else(|| ".minecraft".into())
+			crate::launcher::core::paths::default_minecraft_dir().unwrap_or_else(|| ".minecraft".into())
 		})
 	}
 
 	pub fn scan_instances(&self) {
 		let path = self.cluster_path();
-		if let Ok(found) = crate::game::instance::InstanceScanner::scan_cluster(&path) {
+		if let Ok(found) = crate::minecraft::game::instance::InstanceScanner::scan_cluster(&path) {
 			let mut guard = self.instances.write().unwrap();
 			tracing::info!("Scanned {} instances from {}", found.len(), path.display());
 			*guard = found;

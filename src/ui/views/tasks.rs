@@ -1,6 +1,6 @@
-use crate::core::state::AppState;
-use crate::task::game::download::{DownloadProgressState, ProgressRef};
-use crate::task::handle::TaskId;
+use crate::launcher::core::state::AppState;
+use crate::minecraft::tasks::download::{DownloadProgressState, ProgressRef};
+use crate::launcher::task::handle::TaskId;
 use gpui::{div, prelude::*, px, rgb};
 
 pub struct TasksView;

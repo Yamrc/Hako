@@ -1,4 +1,4 @@
-use crate::core::state::AppState;
+use crate::launcher::core::state::AppState;
 use crate::ui::components::{navbar::Navbar, topbar::Topbar};
 use crate::ui::views::{
 	download::DownloadView, home::HomeView, instances::InstancesView, settings::SettingsView,

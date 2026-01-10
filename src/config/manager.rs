@@ -1,6 +1,6 @@
 use crate::config::game::GameConfig;
 use crate::config::launcher::LauncherConfig;
-use crate::core::paths;
+use crate::launcher::core::paths;
 use anyhow::{Context, Result};
 use std::fs;
 use std::path::Path;

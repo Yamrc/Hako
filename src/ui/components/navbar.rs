@@ -1,5 +1,5 @@
-use crate::core::state::AppState;
-use crate::task::game::start::StartGameTask;
+use crate::launcher::core::state::AppState;
+use crate::minecraft::tasks::start::StartGameTask;
 use gpui::{Context, Render, Window, div, prelude::*, px, rgb, white};
 use gpui_router::NavLink;
 

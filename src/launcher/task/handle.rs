@@ -1,4 +1,4 @@
-use crate::task::error::TaskError;
+use crate::launcher::task::error::TaskError;
 use std::sync::Arc;
 use tokio::sync::{Notify, oneshot, watch};
 use uuid::Uuid;

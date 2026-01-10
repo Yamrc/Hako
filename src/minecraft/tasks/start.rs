@@ -1,15 +1,15 @@
 use crate::config::manager::ConfigManager;
-use crate::core::state::AppState;
-use crate::game::args::{Features, collect_game_args, collect_jvm_args};
-use crate::game::classpath::build_classpath;
-use crate::game::instance::GameInstance;
-use crate::game::java::find_java;
-use crate::game::natives::{extract_natives, get_natives_directory};
-use crate::game::profile::{VersionProfile, load_version_profile};
-use crate::task::error::{TaskError, TaskResult};
-use crate::task::lock::LockKey;
-use crate::task::main_task::{BlockingTask, TaskContext, TaskType};
-use crate::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
+use crate::launcher::core::state::AppState;
+use crate::minecraft::game::args::{Features, collect_game_args, collect_jvm_args};
+use crate::minecraft::game::classpath::build_classpath;
+use crate::minecraft::game::instance::GameInstance;
+use crate::minecraft::game::java::find_java;
+use crate::minecraft::game::natives::{extract_natives, get_natives_directory};
+use crate::minecraft::profile::{VersionProfile, load_version_profile};
+use crate::launcher::task::error::{TaskError, TaskResult};
+use crate::launcher::task::lock::LockKey;
+use crate::launcher::task::framework::{BlockingTask, TaskContext, TaskType};
+use crate::launcher::task::sub_task::{SubTask, SubTaskChain, SubTaskContext};
 use anyhow::Context;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -53,7 +53,7 @@ impl StartContext {
 			.unwrap_or_else(|| {
 				(
 					"Player".into(),
-					crate::account::offline_uuid("Player").to_string(),
+					crate::minecraft::account::offline_uuid("Player").to_string(),
 				)
 			});
 

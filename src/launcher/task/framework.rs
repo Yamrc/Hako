@@ -1,5 +1,5 @@
-use crate::task::error::TaskResult;
-use crate::task::lock::LockKey;
+use crate::launcher::task::error::TaskResult;
+use crate::launcher::task::lock::LockKey;
 use async_trait::async_trait;
 
 pub trait TaskType: Send + Sync + 'static {
